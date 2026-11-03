@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 const DISCUSSION_TIME = 180
 
-export default function DiscussScreen({ gameState, onReveal }) {
+export default function DiscussScreen({ gameState, onReveal, onQuit }) {
   const { players, sussyBakaIndex } = gameState
   const [timeLeft, setTimeLeft] = useState(DISCUSSION_TIME)
   const [running, setRunning] = useState(true)
@@ -24,6 +24,7 @@ export default function DiscussScreen({ gameState, onReveal }) {
 
   return (
     <div className="screen discuss-screen">
+      <button className="quit-btn" onClick={onQuit}>✕ Quit</button>
       <div className="discuss-header">
         <h2 className="discuss-title">Discussion Time 💬</h2>
         <p className="discuss-subtitle">

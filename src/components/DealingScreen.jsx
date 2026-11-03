@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function DealingScreen({ gameState, onDone }) {
+export default function DealingScreen({ gameState, onDone, onQuit }) {
   const { players, selectedCard, sussyBakaIndex } = gameState
   const [seen, setSeen] = useState(new Set())
   const [viewing, setViewing] = useState(null)
@@ -65,6 +65,7 @@ export default function DealingScreen({ gameState, onDone }) {
 
   return (
     <div className="screen dealing-screen">
+      <button className="quit-btn" onClick={onQuit}>✕ Quit</button>
       <div className="dealing-header">
         <h2 className="dealing-title">Get Your Word</h2>
         <p className="dealing-subtitle">

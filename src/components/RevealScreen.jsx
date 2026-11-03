@@ -1,4 +1,4 @@
-export default function RevealScreen({ gameState, onPlayAgain }) {
+export default function RevealScreen({ gameState, onPlayAgain: onQuit }) {
   const { players, selectedCard, sussyBakaIndex } = gameState
   const sussyNames = sussyBakaIndex.map(i => players[i])
 
@@ -22,7 +22,7 @@ export default function RevealScreen({ gameState, onPlayAgain }) {
         </div>
       </div>
 
-      <button className="play-again-btn" onClick={onPlayAgain}>
+      <button className="play-again-btn" onClick={onQuit}>
         Play Again 🎮
       </button>
     </div>

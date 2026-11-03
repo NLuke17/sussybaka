@@ -1,14 +1,12 @@
 import { useState, useRef } from 'react'
 import { DEFAULT_PACKS } from '../data/packs'
 
-export default function SetupScreen({ onStart }) {
+export default function SetupScreen({ onStart, selectedPackIds, setSelectedPackIds, hintsEnabled, setHintsEnabled }) {
   const [playerCount, setPlayerCount] = useState(4)
   const [playerNames, setPlayerNames] = useState(['', '', '', ''])
-  const [selectedPackIds, setSelectedPackIds] = useState(new Set(['anime']))
   const [customPacks, setCustomPacks] = useState([])
   const [uploadError, setUploadError] = useState('')
   const [sussyCount, setSussyCount] = useState(1)
-  const [hintsEnabled, setHintsEnabled] = useState(true)
   const fileInputRef = useRef()
 
   const allPacks = [...DEFAULT_PACKS, ...customPacks]
