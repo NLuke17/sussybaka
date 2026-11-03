@@ -4,7 +4,7 @@ import { DEFAULT_PACKS } from '../data/packs'
 export default function SetupScreen({ onStart }) {
   const [playerCount, setPlayerCount] = useState(4)
   const [playerNames, setPlayerNames] = useState(['', '', '', ''])
-  const [selectedPackId, setSelectedPackId] = useState('anime')
+  const [selectedPackIds, setSelectedPackIds] = useState(new Set(['anime']))
   const [customPacks, setCustomPacks] = useState([])
   const [uploadError, setUploadError] = useState('')
   const [sussyCount, setSussyCount] = useState(1)
@@ -12,7 +12,18 @@ export default function SetupScreen({ onStart }) {
   const fileInputRef = useRef()
 
   const allPacks = [...DEFAULT_PACKS, ...customPacks]
-  const selectedPack = allPacks.find(p => p.id === selectedPackId)
+  const totalCards = allPacks
+    .filter(p => selectedPackIds.has(p.id))
+    .reduce((sum, p) => sum + p.cards.length, 0)
+
+  function togglePack(id) {
+    setSelectedPackIds(prev => {
+      if (prev.has(id) && prev.size === 1) return prev // keep at least one
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }
 
   function updatePlayerCount(n) {
     const count = Math.max(3, Math.min(12, n))
@@ -38,12 +49,12 @@ export default function SetupScreen({ onStart }) {
       try {
         const data = JSON.parse(evt.target.result)
         if (!data.name || !Array.isArray(data.cards)) {
-          setUploadError('Invalid pack format. Need { name, cards: [{ word, category, hint }] }')
+          setUploadError('Invalid pack format. Need { name, cards: [{ word, hint }] }')
           return
         }
-        const invalid = data.cards.find(c => !c.word || !c.category || !c.hint)
+        const invalid = data.cards.find(c => !c.word || !c.hint)
         if (invalid) {
-          setUploadError('Each card needs: word, category, hint')
+          setUploadError('Each card needs: word, hint')
           return
         }
         const id = 'custom_' + Date.now()
@@ -55,7 +66,7 @@ export default function SetupScreen({ onStart }) {
           cards: data.cards,
         }
         setCustomPacks(prev => [...prev, pack])
-        setSelectedPackId(id)
+        setSelectedPackIds(prev => new Set([...prev, id]))
       } catch {
         setUploadError('Could not parse file. Make sure it is valid JSON.')
       }
@@ -65,10 +76,14 @@ export default function SetupScreen({ onStart }) {
   }
 
   function handleStart() {
-    if (!selectedPack || selectedPack.cards.length === 0) return
+    if (selectedPackIds.size === 0 || totalCards === 0) return
     const names = playerNames.map((n, i) => n.trim() || `Player ${i + 1}`)
-    const cardIndex = Math.floor(Math.random() * selectedPack.cards.length)
-    const selectedCard = selectedPack.cards[cardIndex]
+
+    const pooledCards = allPacks
+      .filter(p => selectedPackIds.has(p.id))
+      .flatMap(p => p.cards.map(c => ({ ...c, packName: p.name })))
+
+    const selectedCard = pooledCards[Math.floor(Math.random() * pooledCards.length)]
 
     const indices = Array.from({ length: playerCount }, (_, i) => i)
     const shuffled = indices.sort(() => Math.random() - 0.5)
@@ -77,7 +92,7 @@ export default function SetupScreen({ onStart }) {
     onStart({ players: names, selectedCard, sussyBakaIndex: sussyBakaIndices, hintsEnabled })
   }
 
-  const canStart = selectedPack && playerCount >= 3
+  const canStart = selectedPackIds.size > 0 && playerCount >= 3
 
   return (
     <div className="screen setup-screen">
@@ -126,7 +141,7 @@ export default function SetupScreen({ onStart }) {
           <div className="option-row">
             <div className="option-info">
               <span className="option-label">Hints for Sussy Baka</span>
-              <span className="option-desc">Show a vague extra clue alongside the category</span>
+              <span className="option-desc">Show a vague extra clue alongside the pack name</span>
             </div>
             <button
               className={`toggle-btn ${hintsEnabled ? 'toggle-on' : 'toggle-off'}`}
@@ -139,19 +154,26 @@ export default function SetupScreen({ onStart }) {
         </section>
 
         <section className="setup-section">
-          <h2 className="section-title">Word Pack</h2>
+          <div className="pack-section-header">
+            <h2 className="section-title">Word Packs</h2>
+            <span className="pack-total">{totalCards} cards in pool</span>
+          </div>
           <div className="pack-grid">
-            {allPacks.map(pack => (
-              <button
-                key={pack.id}
-                className={`pack-card ${selectedPackId === pack.id ? 'pack-selected' : ''}`}
-                onClick={() => setSelectedPackId(pack.id)}
-              >
-                <span className="pack-emoji">{pack.emoji}</span>
-                <span className="pack-name">{pack.name}</span>
-                <span className="pack-count">{pack.cards.length} cards</span>
-              </button>
-            ))}
+            {allPacks.map(pack => {
+              const selected = selectedPackIds.has(pack.id)
+              return (
+                <button
+                  key={pack.id}
+                  className={`pack-card ${selected ? 'pack-selected' : ''}`}
+                  onClick={() => togglePack(pack.id)}
+                >
+                  {selected && <span className="pack-check">✓</span>}
+                  <span className="pack-emoji">{pack.emoji}</span>
+                  <span className="pack-name">{pack.name}</span>
+                  <span className="pack-count">{pack.cards.length} cards</span>
+                </button>
+              )
+            })}
           </div>
 
           <div className="upload-area">
@@ -167,7 +189,7 @@ export default function SetupScreen({ onStart }) {
             />
             {uploadError && <p className="upload-error">{uploadError}</p>}
             <p className="upload-hint">
-              JSON format: {'{ "name": "My Pack", "emoji": "🔥", "cards": [{ "word": "...", "category": "...", "hint": "..." }] }'}
+              {'{ "name": "My Pack", "emoji": "🔥", "cards": [{ "word": "...", "hint": "..." }] }'}
             </p>
           </div>
         </section>

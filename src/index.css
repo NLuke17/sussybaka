@@ -231,6 +231,35 @@ button {
   box-shadow: var(--glow-purple);
 }
 
+.pack-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.pack-section-header .section-title { margin-bottom: 0; }
+
+.pack-total {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent3);
+  background: rgba(168,85,247,0.1);
+  border: 1px solid rgba(168,85,247,0.2);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.pack-card { position: relative; }
+
+.pack-check {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: var(--accent3);
+}
+
 .pack-emoji { font-size: 1.5rem; }
 .pack-name { font-size: 0.82rem; font-weight: 800; color: var(--text); }
 .pack-count { font-size: 0.72rem; color: var(--text3); }

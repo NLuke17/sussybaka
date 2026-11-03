@@ -126,7 +126,7 @@ function SussyCard({ card, hintsEnabled }) {
       <div className="sussy-clues">
         <div className="clue-box">
           <span className="clue-label">Category</span>
-          <span className="clue-value">{card.category}</span>
+          <span className="clue-value">{card.packName}</span>
         </div>
         {hintsEnabled && (
           <div className="clue-box">
