@@ -1,32 +1,17 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { DEFAULT_PACKS } from '../data/packs'
 
-const STORAGE_KEY = 'sussy_custom_packs'
-
-function loadCustomPacks() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : []
-  } catch {
-    return []
-  }
-}
-
 export default function SetupScreen({
-  onStart,
+  onStart, onOpenPackMaker,
   selectedPackIds, setSelectedPackIds,
   hintsEnabled, setHintsEnabled,
   playerCount, setPlayerCount,
   playerNames, setPlayerNames,
   sussyCount, setSussyCount,
+  customPacks, onAddCustomPack, onRemoveCustomPack,
 }) {
-  const [customPacks, setCustomPacks] = useState(loadCustomPacks)
   const [uploadError, setUploadError] = useState('')
   const fileInputRef = useRef()
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(customPacks))
-  }, [customPacks])
 
   const allPacks = [...DEFAULT_PACKS, ...customPacks]
   const totalCards = allPacks
@@ -57,16 +42,6 @@ export default function SetupScreen({
     setPlayerNames(prev => { const next = [...prev]; next[i] = val; return next })
   }
 
-  function removeCustomPack(id) {
-    setCustomPacks(prev => prev.filter(p => p.id !== id))
-    setSelectedPackIds(prev => {
-      const next = new Set(prev)
-      next.delete(id)
-      if (next.size === 0) next.add('anime')
-      return next
-    })
-  }
-
   function handleFileUpload(e) {
     const file = e.target.files[0]
     if (!file) return
@@ -84,16 +59,13 @@ export default function SetupScreen({
           setUploadError('Each card needs: word, hint')
           return
         }
-        const id = 'custom_' + Date.now()
-        const pack = {
-          id,
+        onAddCustomPack({
+          id: 'custom_' + Date.now(),
           name: data.name,
           emoji: data.emoji || '📦',
           description: data.description || 'Custom pack',
           cards: data.cards,
-        }
-        setCustomPacks(prev => [...prev, pack])
-        setSelectedPackIds(prev => new Set([...prev, id]))
+        })
       } catch {
         setUploadError('Could not parse file. Make sure it is valid JSON.')
       }
@@ -203,7 +175,7 @@ export default function SetupScreen({
                   {isCustom && (
                     <button
                       className="pack-remove-btn"
-                      onClick={() => removeCustomPack(pack.id)}
+                      onClick={() => onRemoveCustomPack(pack.id)}
                       aria-label={`Remove ${pack.name}`}
                     >✕</button>
                   )}
@@ -213,8 +185,11 @@ export default function SetupScreen({
           </div>
 
           <div className="upload-area">
+            <button className="upload-btn" onClick={onOpenPackMaker}>
+              ✏️ Create Pack
+            </button>
             <button className="upload-btn" onClick={() => fileInputRef.current.click()}>
-              + Upload Custom Pack
+              + Upload JSON
             </button>
             <input
               ref={fileInputRef}

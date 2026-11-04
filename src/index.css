@@ -344,7 +344,7 @@ button {
 .toggle-on .toggle-knob { left: 27px; }
 .toggle-off .toggle-knob { left: 5px; }
 
-.upload-area { margin-top: 8px; }
+.upload-area { margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
 
 .upload-btn {
   width: 100%;
@@ -899,6 +899,169 @@ button {
   min-height: 60px;
 }
 .play-again-btn:active { transform: scale(0.98); box-shadow: 0 0 30px rgba(6,182,212,0.4); }
+
+/* ── Pack Maker ── */
+.packmaker-screen { align-items: stretch; }
+
+.packmaker-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.packmaker-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--accent3);
+}
+
+.packmaker-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.packmaker-info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.emoji-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.emoji-opt {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: var(--bg3);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+}
+.emoji-opt:active { background: var(--surface2); }
+.emoji-selected {
+  border-color: var(--accent2);
+  background: rgba(168,85,247,0.2);
+  box-shadow: var(--glow-purple);
+}
+
+.packmaker-name-input { width: 100%; }
+
+.packmaker-cards-header {
+  margin-bottom: 10px;
+}
+.packmaker-cards-header .section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0;
+}
+
+.packmaker-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.packmaker-card-row {
+  display: grid;
+  grid-template-columns: 20px 1fr 1fr 28px;
+  gap: 6px;
+  align-items: center;
+}
+
+.card-row-num {
+  font-size: 0.7rem;
+  color: var(--text3);
+  font-weight: 700;
+  text-align: right;
+}
+
+.packmaker-input {
+  background: var(--bg3);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 10px 10px;
+  min-height: 44px;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.packmaker-input:focus { border-color: var(--accent2); }
+
+.card-row-remove {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: var(--surface2);
+  color: var(--text3);
+  font-size: 0.6rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+}
+.card-row-remove:active { background: var(--red); color: #fff; }
+.card-row-remove:disabled { opacity: 0.3; cursor: default; }
+
+.add-card-btn {
+  width: 100%;
+  padding: 12px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--accent3);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  min-height: 44px;
+  touch-action: manipulation;
+}
+.add-card-btn:active { border-color: var(--accent2); background: rgba(168,85,247,0.08); }
+
+.packmaker-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 8px;
+}
+
+.download-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 2px solid var(--accent2);
+  background: transparent;
+  color: var(--accent3);
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  min-height: 52px;
+  touch-action: manipulation;
+}
+.download-btn:active { background: rgba(168,85,247,0.15); }
+.download-btn:disabled { opacity: 0.4; cursor: default; }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 4px; }
