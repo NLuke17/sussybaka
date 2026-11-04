@@ -1,12 +1,16 @@
 import { useState, useRef } from 'react'
 import { DEFAULT_PACKS } from '../data/packs'
 
-export default function SetupScreen({ onStart, selectedPackIds, setSelectedPackIds, hintsEnabled, setHintsEnabled }) {
-  const [playerCount, setPlayerCount] = useState(4)
-  const [playerNames, setPlayerNames] = useState(['', '', '', ''])
+export default function SetupScreen({
+  onStart,
+  selectedPackIds, setSelectedPackIds,
+  hintsEnabled, setHintsEnabled,
+  playerCount, setPlayerCount,
+  playerNames, setPlayerNames,
+  sussyCount, setSussyCount,
+}) {
   const [customPacks, setCustomPacks] = useState([])
   const [uploadError, setUploadError] = useState('')
-  const [sussyCount, setSussyCount] = useState(1)
   const fileInputRef = useRef()
 
   const allPacks = [...DEFAULT_PACKS, ...customPacks]
@@ -35,7 +39,7 @@ export default function SetupScreen({ onStart, selectedPackIds, setSelectedPackI
   }
 
   function updateName(i, val) {
-    setPlayerNames(prev => { const n = [...prev]; n[i] = val; return n })
+    setPlayerNames(prev => { const next = [...prev]; next[i] = val; return next })
   }
 
   function handleFileUpload(e) {

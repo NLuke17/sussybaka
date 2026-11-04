@@ -15,9 +15,12 @@ export default function App() {
   const [screen, setScreen] = useState(SCREENS.SETUP)
   const [gameState, setGameState] = useState(null)
 
-  // Lifted so pack/hint choices survive across rounds
+  // Lifted so choices survive across rounds
   const [selectedPackIds, setSelectedPackIds] = useState(new Set(['anime']))
   const [hintsEnabled, setHintsEnabled] = useState(true)
+  const [playerCount, setPlayerCount] = useState(4)
+  const [playerNames, setPlayerNames] = useState(['', '', '', ''])
+  const [sussyCount, setSussyCount] = useState(1)
 
   function startGame(config) {
     const { players, selectedCard, sussyBakaIndex } = config
@@ -43,6 +46,12 @@ export default function App() {
           setSelectedPackIds={setSelectedPackIds}
           hintsEnabled={hintsEnabled}
           setHintsEnabled={setHintsEnabled}
+          playerCount={playerCount}
+          setPlayerCount={setPlayerCount}
+          playerNames={playerNames}
+          setPlayerNames={setPlayerNames}
+          sussyCount={sussyCount}
+          setSussyCount={setSussyCount}
         />
       )}
       {screen === SCREENS.DEALING && gameState && (
