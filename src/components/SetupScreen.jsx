@@ -1,5 +1,16 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { DEFAULT_PACKS } from '../data/packs'
+
+const STORAGE_KEY = 'sussy_custom_packs'
+
+function loadCustomPacks() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
 
 export default function SetupScreen({
   onStart,
@@ -9,9 +20,13 @@ export default function SetupScreen({
   playerNames, setPlayerNames,
   sussyCount, setSussyCount,
 }) {
-  const [customPacks, setCustomPacks] = useState([])
+  const [customPacks, setCustomPacks] = useState(loadCustomPacks)
   const [uploadError, setUploadError] = useState('')
   const fileInputRef = useRef()
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(customPacks))
+  }, [customPacks])
 
   const allPacks = [...DEFAULT_PACKS, ...customPacks]
   const totalCards = allPacks
@@ -40,6 +55,16 @@ export default function SetupScreen({
 
   function updateName(i, val) {
     setPlayerNames(prev => { const next = [...prev]; next[i] = val; return next })
+  }
+
+  function removeCustomPack(id) {
+    setCustomPacks(prev => prev.filter(p => p.id !== id))
+    setSelectedPackIds(prev => {
+      const next = new Set(prev)
+      next.delete(id)
+      if (next.size === 0) next.add('anime')
+      return next
+    })
   }
 
   function handleFileUpload(e) {
@@ -163,17 +188,26 @@ export default function SetupScreen({
           <div className="pack-grid">
             {allPacks.map(pack => {
               const selected = selectedPackIds.has(pack.id)
+              const isCustom = pack.id.startsWith('custom_')
               return (
-                <button
-                  key={pack.id}
-                  className={`pack-card ${selected ? 'pack-selected' : ''}`}
-                  onClick={() => togglePack(pack.id)}
-                >
-                  {selected && <span className="pack-check">✓</span>}
-                  <span className="pack-emoji">{pack.emoji}</span>
-                  <span className="pack-name">{pack.name}</span>
-                  <span className="pack-count">{pack.cards.length} cards</span>
-                </button>
+                <div key={pack.id} className="pack-card-wrapper">
+                  <button
+                    className={`pack-card ${selected ? 'pack-selected' : ''}`}
+                    onClick={() => togglePack(pack.id)}
+                  >
+                    {selected && <span className="pack-check">✓</span>}
+                    <span className="pack-emoji">{pack.emoji}</span>
+                    <span className="pack-name">{pack.name}</span>
+                    <span className="pack-count">{pack.cards.length} cards</span>
+                  </button>
+                  {isCustom && (
+                    <button
+                      className="pack-remove-btn"
+                      onClick={() => removeCustomPack(pack.id)}
+                      aria-label={`Remove ${pack.name}`}
+                    >✕</button>
+                  )}
+                </div>
               )
             })}
           </div>
